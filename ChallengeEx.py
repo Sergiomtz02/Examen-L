@@ -57,13 +57,12 @@ periodos = {"1M": 1, "3M": 3, "6M": 6, "1A": 12, "3A": 36, "5A": 60, "10A": 120,
 
 if st.button("Calcular"):
     if seleccionados:
-          # Inicializar la lista para rendimientos acumulados
-        rendimientos_acumulados = []
-        precios_historicos = {}
+        # Inicializar listas para almacenar resultados
         rendimientos_acumulados = []
         volatilidades_anualizadas = []
         resultados_globales = pd.DataFrame()
         detalles_inversion = pd.DataFrame(columns=["Instrumento", "Descripción", "Símbolo"])
+        precios_historicos = {}
 
         st.markdown("<h3 style='color: lightblue; font-weight: bold;'>Detalles de la Inversión:</h3>", unsafe_allow_html=True)
         
@@ -133,21 +132,22 @@ if st.button("Calcular"):
         ax.legend(loc="upper left")
         st.pyplot(fig)
 
-# Calcular rendimiento ajustado por el porcentaje de inversión
-if len(rendimientos_acumulados) == len(seleccionados):
-    # Comprobar si rendimientos acumulados son válidos
-    rendimientos_validos = all(rendimiento is not None for rendimiento in rendimientos_acumulados)
+        # Calcular rendimiento ajustado por el porcentaje de inversión
+        if len(rendimientos_acumulados) == len(seleccionados):
+            # Comprobar si rendimientos acumulados son válidos
+            rendimientos_validos = all(rendimiento is not None for rendimiento in rendimientos_acumulados)
 
-    if rendimientos_validos:
-        rendimiento_acumulado_portafolio = sum(
-            porcentajes_inversion[nombre] * (rendimiento_acumulado.item() if hasattr(rendimiento_acumulado, 'item') else rendimiento_acumulado) / 100
-            for i, (nombre, rendimiento_acumulado) in enumerate(zip(seleccionados, rendimientos_acumulados))
-        )
-        st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
-    else:
-        st.error("Error: Uno o más rendimientos acumulados no son válidos.")
-else:
-    st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+            if rendimientos_validos:
+                # Calcular rendimiento acumulado del portafolio
+                rendimiento_acumulado_portafolio = sum(
+                    porcentajes_inversion[nombre] * (rendimiento.item() if hasattr(rendimiento, 'item') else rendimiento) / 100
+                    for nombre, rendimiento in zip(seleccionados, rendimientos_acumulados)
+                )
+                st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
+            else:
+                st.error("Error: Uno o más rendimientos acumulados no son válidos.")
+        else:
+            st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
 
 
 
