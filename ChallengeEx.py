@@ -15,7 +15,7 @@ def obtener_rendimiento_y_riesgo_logaritmico(instrumento, inicio, fin):
             return None, None, None, None
         precios = datos['Adj Close'].dropna()
         rendimientos_logaritmicos_diarios = np.log(precios / precios.shift(1)).dropna()
-        rendimiento_acumulado = rendimientos_logaritmicos_diarios.sum()
+        rendimiento_acumulado = rendimientos_logaritmicos_diarios.sum()  # Suma total del rendimiento acumulado
         volatilidad_diaria = rendimientos_logaritmicos_diarios.std()
         volatilidad_anualizada = volatilidad_diaria * np.sqrt(252)
         return rendimientos_logaritmicos_diarios, rendimiento_acumulado, volatilidad_anualizada, precios
@@ -90,10 +90,11 @@ if st.button("Calcular"):
                     rendimientos_log, rendimiento_acumulado, volatilidad_anualizada, _ = obtener_rendimiento_y_riesgo_logaritmico(instrumento, fecha_inicio, fecha_fin)
                     # Validamos que los valores no sean None antes de usarlos
                     if rendimientos_log is not None and rendimiento_acumulado is not None and volatilidad_anualizada is not None:
+                        rendimiento_acumulado_total = rendimiento_acumulado if isinstance(rendimiento_acumulado, (float, int)) else rendimiento_acumulado.sum()
                         temp_df = pd.DataFrame({
                             "Instrumento": [instrumento['nombre']],
                             "Periodo": [nombre_periodo],
-                            "Rendimiento": [f"{rendimiento_acumulado * 100:.2f}%"],
+                            "Rendimiento": [f"{rendimiento_acumulado_total * 100:.2f}%"],
                             "Volatilidad": [f"{volatilidad_anualizada * 100:.2f}%"]
                         })
                         resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
@@ -129,5 +130,6 @@ if st.button("Calcular"):
             st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
         else:
             st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+
 
 
