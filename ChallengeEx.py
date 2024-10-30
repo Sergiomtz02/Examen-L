@@ -131,12 +131,16 @@ if st.button("Calcular"):
         ax.legend(loc="upper left")
         st.pyplot(fig)
 
-        # Calcular rendimiento ajustado por el porcentaje de inversión
-        if len(rendimientos_acumulados) == len(seleccionados):
-            rendimiento_acumulado_portafolio = sum(porcentajes_inversion[nombre] * rendimientos_acumulados[i] / 100 for i, nombre in enumerate(seleccionados))
-            st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
-        else:
-            st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+# Calcular rendimiento ajustado por el porcentaje de inversión
+if len(rendimientos_acumulados) == len(seleccionados):
+    # Aquí asumimos que rendimiento_acumulado_portafolio es un objeto Series
+    rendimiento_acumulado_portafolio = sum(porcentajes_inversion * rendimientos_acumulados)
+
+    # Usar iloc[0] si rendimiento_acumulado_portafolio es una Serie de un solo valor
+    st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio.iloc[0] if isinstance(rendimiento_acumulado_portafolio, pd.Series) else rendimiento_acumulado_portafolio}")
+else:
+    st.error("Error: No se obtuvieron suficientes datos para todos los ETFs seleccionados.")
+
 
 
 
