@@ -88,7 +88,8 @@ if st.button("Calcular"):
                         fecha_inicio = obtener_fecha_periodo(meses)
 
                     rendimientos_log, rendimiento_acumulado, volatilidad_anualizada, _ = obtener_rendimiento_y_riesgo_logaritmico(instrumento, fecha_inicio, fecha_fin)
-                    if rendimientos_log is not None and volatilidad_anualizada is not None:
+                    # Validamos que los valores no sean None antes de usarlos
+                    if rendimientos_log is not None and rendimiento_acumulado is not None and volatilidad_anualizada is not None:
                         temp_df = pd.DataFrame({
                             "Instrumento": [instrumento['nombre']],
                             "Periodo": [nombre_periodo],
@@ -96,6 +97,8 @@ if st.button("Calcular"):
                             "Volatilidad": [f"{volatilidad_anualizada * 100:.2f}%"]
                         })
                         resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
+                    else:
+                        st.warning(f"No se pudieron obtener datos de rendimiento o volatilidad para el instrumento {instrumento['nombre']} en el periodo {nombre_periodo}.")
 
         # Mostrar los detalles de la inversión sin tabla
         for index, row in detalles_inversion.iterrows():
@@ -126,3 +129,5 @@ if st.button("Calcular"):
             st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
         else:
             st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+
+
