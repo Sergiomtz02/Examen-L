@@ -88,16 +88,23 @@ if st.button("Calcular"):
                         fecha_inicio = obtener_fecha_periodo(meses)
 
                     rendimientos_log, rendimiento_acumulado, volatilidad_anualizada, _ = obtener_rendimiento_y_riesgo_logaritmico(instrumento, fecha_inicio, fecha_fin)
-                    # Validamos que los valores no sean None antes de usarlos
-                    if rendimientos_log is not None and rendimiento_acumulado is not None and volatilidad_anualizada is not None:
-                        rendimiento_acumulado_total = rendimiento_acumulado if isinstance(rendimiento_acumulado, (float, int)) else rendimiento_acumulado.sum()
-                        temp_df = pd.DataFrame({
-                            "Instrumento": [instrumento['nombre']],
-                            "Periodo": [nombre_periodo],
-                            "Rendimiento": [f"{rendimiento_acumulado_total * 100:.2f}%"],
-                            "Volatilidad": [f"{volatilidad_anualizada * 100:.2f}%"]
-                        })
-                        resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
+# Comprobar si el rendimiento acumulado y la volatilidad son válidos
+if rendimiento_acumulado is not None and volatilidad_anualizada is not None:
+    # Convertir a valores escalares en caso de que sean Series
+    rendimiento_valor = rendimiento_acumulado.item() if hasattr(rendimiento_acumulado, 'item') else rendimiento_acumulado
+    volatilidad_valor = volatilidad_anualizada.item() if hasattr(volatilidad_anualizada, 'item') else volatilidad_anualizada
+    
+    # Crear DataFrame temporal con los valores formateados
+    temp_df = pd.DataFrame({
+        "Instrumento": [instrumento['nombre']],
+        "Periodo": [nombre_periodo],
+        "Rendimiento": [f"{rendimiento_valor * 100:.2f}%"],
+        "Volatilidad": [f"{volatilidad_valor * 100:.2f}%"]
+    })
+    
+    # Concatenar el DataFrame temporal a los resultados globales
+    resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
+
                     else:
                         st.warning(f"No se pudieron obtener datos de rendimiento o volatilidad para el instrumento {instrumento['nombre']} en el periodo {nombre_periodo}.")
 
