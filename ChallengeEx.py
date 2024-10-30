@@ -65,6 +65,9 @@ if st.button("Calcular"):
 
         st.markdown("<h3 style='color: lightblue; font-weight: bold;'>Detalles de la Inversión:</h3>", unsafe_allow_html=True)
 
+        # Inicializar la lista para rendimientos acumulados
+        rendimientos_acumulados = []
+        
         for instrumento in instrumentos_financieros:
             if instrumento["nombre"] in seleccionados:
                 rendimientos_log, rendimiento_acumulado, volatilidad_anualizada, precios = obtener_rendimiento_y_riesgo_logaritmico(instrumento, fecha_inicio_ytd, fecha_fin)
