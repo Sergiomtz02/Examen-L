@@ -57,6 +57,8 @@ periodos = {"1M": 1, "3M": 3, "6M": 6, "1A": 12, "3A": 36, "5A": 60, "10A": 120,
 
 if st.button("Calcular"):
     if seleccionados:
+          # Inicializar la lista para rendimientos acumulados
+        rendimientos_acumulados = []
         precios_historicos = {}
         rendimientos_acumulados = []
         volatilidades_anualizadas = []
@@ -64,9 +66,6 @@ if st.button("Calcular"):
         detalles_inversion = pd.DataFrame(columns=["Instrumento", "Descripción", "Símbolo"])
 
         st.markdown("<h3 style='color: lightblue; font-weight: bold;'>Detalles de la Inversión:</h3>", unsafe_allow_html=True)
-
-        # Inicializar la lista para rendimientos acumulados
-        rendimientos_acumulados = []
         
         for instrumento in instrumentos_financieros:
             if instrumento["nombre"] in seleccionados:
