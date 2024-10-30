@@ -88,22 +88,23 @@ if st.button("Calcular"):
                         fecha_inicio = obtener_fecha_periodo(meses)
 
                     rendimientos_log, rendimiento_acumulado, volatilidad_anualizada, _ = obtener_rendimiento_y_riesgo_logaritmico(instrumento, fecha_inicio, fecha_fin)
-# Comprobar si el rendimiento acumulado y la volatilidad son válidos
-if rendimiento_acumulado is not None and volatilidad_anualizada is not None:
-    # Convertir a valores escalares en caso de que sean Series
-    rendimiento_valor = rendimiento_acumulado.item() if hasattr(rendimiento_acumulado, 'item') else rendimiento_acumulado
-    volatilidad_valor = volatilidad_anualizada.item() if hasattr(volatilidad_anualizada, 'item') else volatilidad_anualizada
-    
-    # Crear DataFrame temporal con los valores formateados
-    temp_df = pd.DataFrame({
-        "Instrumento": [instrumento['nombre']],
-        "Periodo": [nombre_periodo],
-        "Rendimiento": [f"{rendimiento_valor * 100:.2f}%"],
-        "Volatilidad": [f"{volatilidad_valor * 100:.2f}%"]
-    })
-    
-    # Concatenar el DataFrame temporal a los resultados globales
-    resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
+                    
+                    # Comprobar si el rendimiento acumulado y la volatilidad son válidos
+                    if rendimiento_acumulado is not None and volatilidad_anualizada is not None:
+                        # Convertir a valores escalares en caso de que sean Series
+                        rendimiento_valor = rendimiento_acumulado.item() if hasattr(rendimiento_acumulado, 'item') else rendimiento_acumulado
+                        volatilidad_valor = volatilidad_anualizada.item() if hasattr(volatilidad_anualizada, 'item') else volatilidad_anualizada
+
+                        # Crear DataFrame temporal con los valores formateados
+                        temp_df = pd.DataFrame({
+                            "Instrumento": [instrumento['nombre']],
+                            "Periodo": [nombre_periodo],
+                            "Rendimiento": [f"{rendimiento_valor * 100:.2f}%"],
+                            "Volatilidad": [f"{volatilidad_valor * 100:.2f}%"]
+                        })
+
+                        # Concatenar el DataFrame temporal a los resultados globales
+                        resultados_globales = pd.concat([resultados_globales, temp_df], ignore_index=True)
 
                     else:
                         st.warning(f"No se pudieron obtener datos de rendimiento o volatilidad para el instrumento {instrumento['nombre']} en el periodo {nombre_periodo}.")
@@ -133,10 +134,10 @@ if rendimiento_acumulado is not None and volatilidad_anualizada is not None:
         # Calcular rendimiento ajustado por el porcentaje de inversión
         if len(rendimientos_acumulados) == len(seleccionados):
             rendimiento_acumulado_portafolio = sum(porcentajes_inversion[nombre] * rendimientos_acumulados[i] / 100 for i, nombre in enumerate(seleccionados))
-
             st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
         else:
             st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+
 
 
 
