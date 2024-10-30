@@ -131,12 +131,12 @@ if st.button("Calcular"):
         ax.legend(loc="upper left")
         st.pyplot(fig)
 
-        # Calcular rendimiento ajustado por el porcentaje de inversión
-    if len(rendimientos_acumulados) == len(seleccionados):
-        rendimiento_acumulado_portafolio = sum(porcentajes_inversion[nombre] * rendimientos_acumulados.iloc[i] / 100 for i, nombre in enumerate(seleccionados))
-        st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
-    else:
-        st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+ # Calcular rendimiento ajustado por el porcentaje de inversión
+        if len(rendimientos_acumulados) == len(seleccionados):
+            rendimiento_acumulado_portafolio = sum(porcentajes_inversion[nombre] * rendimientos_acumulados[i] / 100 for i, nombre in enumerate(seleccionados))
+            st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
+        else:
+            st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
 
 
 
