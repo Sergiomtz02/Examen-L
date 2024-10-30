@@ -131,12 +131,22 @@ if st.button("Calcular"):
         ax.legend(loc="upper left")
         st.pyplot(fig)
 
- # Calcular rendimiento ajustado por el porcentaje de inversión
-        if len(rendimientos_acumulados) == len(seleccionados):
-            rendimiento_acumulado_portafolio = sum(porcentajes_inversion[nombre] * rendimientos_acumulados[i] / 100 for i, nombre in enumerate(seleccionados))
-            st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
-        else:
-            st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+# Calcular rendimiento ajustado por el porcentaje de inversión
+if len(rendimientos_acumulados) == len(seleccionados):
+    # Comprobar si rendimientos acumulados son válidos
+    rendimientos_validos = all(rendimiento is not None for rendimiento in rendimientos_acumulados)
+
+    if rendimientos_validos:
+        rendimiento_acumulado_portafolio = sum(
+            porcentajes_inversion[nombre] * (rendimiento_acumulado.item() if hasattr(rendimiento_acumulado, 'item') else rendimiento_acumulado) / 100
+            for i, (nombre, rendimiento_acumulado) in enumerate(zip(seleccionados, rendimientos_acumulados))
+        )
+        st.write(f"**Rendimiento Acumulado del Portafolio**: {rendimiento_acumulado_portafolio * 100:.2f}%")
+    else:
+        st.error("Error: Uno o más rendimientos acumulados no son válidos.")
+else:
+    st.error("Error: No se obtuvieron suficientes datos para todos los instrumentos seleccionados.")
+
 
 
 
